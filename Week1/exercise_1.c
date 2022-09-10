@@ -1,3 +1,7 @@
+/* Find the sum of all the elements of an 1D double array of size n using a function Add.
+	The values in the array are read from keyboard.
+*/
+
 #include<stdio.h>
 
 double Sum(double array[], int n);

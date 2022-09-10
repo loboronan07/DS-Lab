@@ -1,4 +1,3 @@
-                                                                    
 /* Implement an iterative Lsearch(….) function to search for an element in an 1D
 	array of type integer using linear search technique. 
 */

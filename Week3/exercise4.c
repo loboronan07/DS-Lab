@@ -67,20 +67,19 @@ int main(void) {
 
 
 STUDENT* read_student_info() {
-	char name[50], address[100], month[10], college[50], university[50];
+	char name[50], address[200], month[10], college[100], university[100];
+	
 	STUDENT* student = (STUDENT*) malloc(sizeof(STUDENT));
-
 	student->info = (STU_INFO*) malloc(sizeof(STU_INFO));
 	student->dob = (DOB*) malloc(sizeof(DOB));
 	student->college = (COLLEGE*) malloc(sizeof(COLLEGE));
-
 	printf("Registration No: ");
 	scanf("%d", &student->info->reg_no);
 	printf("Name: ");
 	scanf(" %[^\n]s", name);
 	printf("Address: ");
 	scanf(" %[^\n]s", address);
-	printf("Date of Birth: ");
+	printf("Date of Birth(dd month yyyy): ");
 	scanf("%d %s %d", &student->dob->day, month, &student->dob->year);
 	printf("College Name: ");
 	scanf(" %[^\n]s", college);
@@ -95,7 +94,7 @@ STUDENT* read_student_info() {
 	strcpy(month_, month);
 	char *college_ = (char*) calloc(strlen(college)+1, sizeof(char));
 	strcpy(college_, college);
-	char *university_ = (char*) calloc(strlen(name)+1, sizeof(char));
+	char *university_ = (char*) calloc(strlen(university)+1, sizeof(char));
 	strcpy(university_, university);
 
 	student->info->name = name_;
@@ -123,6 +122,9 @@ void free_students(STUDENT** students, int n) {
 		free(students[i]->info->address);
 		free(students[i]->college->college);
 		free(students[i]->college->university);
+		free(students[i]->dob);
+		free(students[i]->info);
+		free(students[i]->college);
 		free(students[i]);
 	}
 	free(students);

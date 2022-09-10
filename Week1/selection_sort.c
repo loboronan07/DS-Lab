@@ -1,3 +1,7 @@
+/* Write a C program to sort given list of n integers into ascending order using
+	selection sort. Use function to sort.
+*/
+
 #include<stdio.h>
 #include "selection_sort_fun.h"
 

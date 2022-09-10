@@ -1,5 +1,4 @@
-/* Find the 2nd largest in a list of numbers using a function (do not sort the list).
-*/
+/* Find the 2nd largest in a list of numbers using a function (do not sort the list). */
 #include<stdio.h>
 #include<stdlib.h>
 

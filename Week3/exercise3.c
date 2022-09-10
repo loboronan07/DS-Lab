@@ -64,7 +64,7 @@ EMPLOYEE* read_employee_info() {
 	EMPLOYEE* employee = (EMPLOYEE*) malloc(sizeof(EMPLOYEE));
 
 	printf("Name: ");
-	scanf("%s", name);
+	scanf(" %[^\n]s", name);
 	printf("Date of Birth(dd mm yyyy): ");
 	scanf("%d %d %d", &employee->dob.day, &employee->dob.month, &employee->dob.year);
 	printf("Address(house_number zip_code state): ");

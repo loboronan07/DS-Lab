@@ -35,11 +35,6 @@ int main(void) {
 		printf("\n");
 	}
 
-	printf("\n\n========= Student Details ========\n\n");
-	for(int i=0; i<n; i++) {
-		display_student_info(students[i]);
-	}
-
 	sort_students(students, n);
 
 	printf("\n\n========= Student Details (Sorted By Roll No) ========\n\n");
@@ -93,6 +88,4 @@ void sort_students(STUDENT** students, int n) {
 			}
 		}
 	}
-
-	return;
 }
