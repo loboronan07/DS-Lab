@@ -31,7 +31,7 @@ typedef struct {
 } EMPLOYEE;
 
 EMPLOYEE* read_employee_info();
-void display_employee_info(EMPLOYEE* student);
+void display_employee_info(EMPLOYEE* employee);
 void free_employees(EMPLOYEE** employees, int n);
 
 int main() {
@@ -52,6 +52,7 @@ int main() {
 	printf("\n\n========= Employee Details ========\n\n");
 	for(int i=0; i<n; i++) {
 		display_employee_info(employees[i]);
+		printf("\n");
 	}
 
 	free_employees(employees, n);
@@ -84,7 +85,7 @@ EMPLOYEE* read_employee_info() {
 
 void display_employee_info(EMPLOYEE* employee) {
 	printf("Name: %s\n", employee->name);
-	printf("Date of Birth: %d:%d:%d\n", employee->dob.day, employee->dob.month, employee->dob.year);
+	printf("Date of Birth: %d/%d/%d\n", employee->dob.day, employee->dob.month, employee->dob.year);
 	printf("Address: House Number %d, Zip - %d, %s\n\n", employee->address.house_number, employee->address.zip, employee->address.state);
 }
 
