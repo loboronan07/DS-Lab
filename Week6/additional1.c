@@ -1,3 +1,7 @@
+/* Additional Exercise 1
+	Convert an infix expression to postfix.
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
