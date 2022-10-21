@@ -72,7 +72,7 @@ int main(void) {
 			printf("Invalid Stack...\n");
 		}
 	}
-
+	
 	free_stack(stack);
 
 	return 0;

@@ -7,105 +7,121 @@
 #include <string.h>
 
 typedef struct {
-	char *arr;
-	int tos;
-} STACK;
+    char** arr;
+    int tos;
+} stack;
 
-STACK* initialize_stack(int);
-void push(STACK*, char);
-char pop(STACK*);
-void free_stack(STACK*);
-char* prefix_to_postfix(char*);
-int is_operator(char);
-int check_precedence(char, char);
-int is_empty(STACK*);
+char* prefix_to_postfix(char* prefix);
+int check_operator(char inp);
+char* string_reverse(char *str);
+char* pop(stack* s);
+void push(stack* s, char *ele);
+char* concat(char *a, char *b, char *c);
+void free_stack(stack* s);
 
 int main(void) {
-	char prefix[100];
+    char prefix[100];
+    
+    printf("Enter the prefix expression: ");
+    scanf("%s", prefix);
 
-	printf("Enter the prefix expression: ");
-	scanf("%[^\n]s", prefix);
+    char *postfix = prefix_to_postfix(prefix);
 
-	char *postfix = prefix_to_postfix(prefix);
+    printf("Postfix Expression Generated: %s\n", postfix);
 
-	printf("The equivalent postfix expression of the above given prefix expression is %s.\n", postfix);
-
-	free(postfix);
-	return 0;
+    free(postfix);
+    return 0;
 }
 
-STACK* initialize_stack(int size) {
-	STACK* stack = (STACK*) malloc(sizeof(STACK));
-	stack->arr = (char*) calloc(size, sizeof(char));
-	stack->tos = -1;
-	return stack;
-}
-
-void push(STACK* stack, char ele) {
-	stack->arr[++stack->tos] = ele;
-}
-
-char pop(STACK* stack) {
-	return stack->arr[stack->tos--];
-}
-
-void free_stack(STACK* stack) {
-	free(stack->arr);
-	free(stack);
-}
-
-char* reverse(char *str) {
-	int len = strlen(str);
-	char* rev = (char*) calloc(len + 1, sizeof(char));
-	for(int i=0; i<len; i++) 
-		rev[i] = str[len-1-i];
-	rev[len] = '\0';
-	return rev;
-}
-
-int is_operator(char c) {
-	switch(c) {
-		case '+':
-		case '-':
-		case '/':
-		case '*':
-		case '%':
-			return 1;
-		default:
-			return 0;
-	}
-}
-
-int is_empty(STACK* stack) {
-	return stack->tos == -1;
-}
 
 char* prefix_to_postfix(char* prefix) {
-	STACK* stack = initialize_stack(strlen(prefix));
-	char c, op;
-	char *postfix = (char *) calloc(strlen(prefix) + 1, sizeof(char));
-	int ind = -1;
-	int count = 0;
+    stack *s = (stack*) malloc(sizeof(stack)); 
+    s->arr = (char**) calloc(strlen(prefix), sizeof(char*)); 
+    s->tos = -1;
+    char *prefix_r = string_reverse(prefix); 
+    char curr, *op1, *op2, *con;
+    char operator[2] = {}, operand[2] = {};
+    for(int index = 0; prefix_r[index] !='\0'; index++) {
+        curr = prefix_r[index];
+        if(!check_operator(curr)) {
+            operand[0] = curr;
+            push(s, operand); 
+        }
+        else {
+            op1 = pop(s);
+            op2 = pop(s);
+            operator[0] = curr;
+            con = concat(op1, op2, operator);
+            push(s, con);
+            free(con);
+            free(op1);
+            free(op2);
+        }
+    }
 
-	for(int i=0; prefix[i] != '\0'; i++) {
-		c = prefix[i];
+    char *postfix = pop(s);
 
-		if(is_operator(c)) {
-			push(stack, c);
-			count = 0;
-			continue;
-		}
-		postfix[++ind] = c;
-		if(count != 0) 
-			postfix[++ind] = pop(stack);
-		count = 1;
-	}
-	while(!is_empty(stack)) 
-		postfix[++ind] = pop(stack);
+    free(prefix_r); 
+    free_stack(s);
 
-	postfix[++ind] = '\0';
-	
-	free_stack(stack);
+    return postfix;
+}
 
-	return postfix;
+int check_operator(char inp) {
+    switch(inp) {
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+char* string_reverse(char *str) {
+    int len = strlen(str);
+    char *rev = (char *) calloc(strlen(str) + 1, sizeof(char));
+    for(int i=0; i < len; i++) {
+        rev[i] = str[len-1-i];
+    }
+    rev[len] = '\0';
+    return rev;
+}
+
+char* pop(stack* s) {
+    if(s->tos == -1) {
+        return NULL;
+    }
+    char *popped = (char *) calloc(strlen(s->arr[s->tos]) + 1, sizeof(char));
+    strcpy(popped, s->arr[s->tos]);
+    free(s->arr[s->tos]);
+    s->arr[s->tos] = NULL;
+    s->tos--;
+    return popped;
+}
+
+void push(stack* s, char *ele) {
+    char *new = (char *) calloc(strlen(ele) + 1, sizeof(char));
+    strcpy(new, ele);
+    s->arr[++(s->tos)] = new;
+}
+
+char* concat(char *a, char *b, char *c) {
+    char *res = (char*) calloc(strlen(a) + strlen(b) + strlen(c) + 1, sizeof(char));
+    int index = 0;
+    for(int i=0; a[i] != '\0'; i++, index++) 
+        res[index] = a[i];
+    for(int i=0; b[i] != '\0'; i++, index++) 
+        res[index] = b[i];
+    for(int i=0; c[i] != '\0'; i++, index++) 
+        res[index] = c[i];
+    res[index] = '\0';
+    return res;
+}
+
+void free_stack(stack* s) {
+    free(s->arr); 
+    free(s); 
 }

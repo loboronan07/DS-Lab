@@ -3,147 +3,128 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct {
-	char *arr;
-	int tos;
-} STACK;
+    char* arr;
+    int tos;
+} stack;
 
-STACK* initialize_stack(int);
-void push(STACK*, char);
-char pop(STACK*);
-void free_stack(STACK*);
-char* infix_to_prefix(char*);
-char* reverse(char *);
-int is_operator(char);
-int check_precedence(char, char);
-int is_empty(STACK*);
+char* infix_to_prefix(char *);
+char pop(stack*);
+void push(stack*, char);
+int check_precedence(stack*, char);
+int check_operator(char);
+char* string_reverse(char *);
 
-int main(void) {
-	char infix[100];
+int main() {
+    char infix[100];
+    
+    printf("Enter the infix expression: ");
+    scanf("%s", infix);
 
-	printf("Enter the infix expression: ");
-	scanf("%[^\n]s", infix);
+    char *prefix = infix_to_prefix(infix);
 
-	char *prefix = infix_to_prefix(infix);
+    printf("Prefix Expression Generated: %s", prefix);
 
-	printf("The equivalent prefix expression of the above given infix expression is %s.\n", prefix);
-
-	free(prefix);
-	return 0;
+    free(prefix);
+    return 0;
 }
 
-STACK* initialize_stack(int size) {
-	STACK* stack = (STACK*) malloc(sizeof(STACK));
-	stack->arr = (char*) calloc(size, sizeof(char));
-	stack->tos = -1;
-	return stack;
+char* infix_to_prefix(char *infix) {
+    stack s;
+    char* prefix_r = (char *) calloc(strlen(infix) + 1, sizeof(char));
+    int prefix_index = -1;
+
+    char *infix_r = string_reverse(infix);
+
+    s.arr = (char *) calloc(strlen(infix), sizeof(char));
+    s.tos = -1;
+
+    for(int index = 0; infix_r[index] != '\0'; index++) {
+        if(check_operator(infix_r[index])) {
+            if(infix_r[index] == '(') {
+                for(char op = pop(&s); op != ')'; op = pop(&s))
+                    prefix_r[++prefix_index]  = op;
+                continue;
+            }
+            while(!check_precedence(&s, infix_r[index]))
+                prefix_r[++prefix_index]  = pop(&s);
+            push(&s, infix_r[index]);
+        }
+        else 
+            prefix_r[++prefix_index] = infix_r[index];
+    }
+
+    for(char op = pop(&s); op != '\0'; op = pop(&s)) 
+        prefix_r[++prefix_index]  = op;
+
+    char *prefix = string_reverse(prefix_r);
+
+    free(s.arr);
+    free(infix_r);
+    free(prefix_r);
+
+    return prefix;
 }
 
-void push(STACK* stack, char ele) {
-	stack->arr[++stack->tos] = ele;
+char pop(stack* s) {
+    if(s->tos == -1) {
+        return 0;
+    }
+    return s->arr[(s->tos)--];
 }
 
-char pop(STACK* stack) {
-	return stack->arr[stack->tos--];
+void push(stack* s, char ele) {
+    s->arr[++(s->tos)] = ele;
 }
 
-void free_stack(STACK* stack) {
-	free(stack->arr);
-	free(stack);
+int check_operator(char inp) {
+    switch(inp) {
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '%':
+        case '(':
+        case ')':
+            return 1;
+        default:
+            return 0;
+    }
 }
 
-char* reverse(char *str) {
-	int len = strlen(str);
-	char* rev = (char*) calloc(len + 1, sizeof(char));
-	for(int i=0; i<len; i++) 
-		rev[i] = str[len-1-i];
-	rev[len] = '\0';
-	return rev;
+int check_precedence(stack* s, char incoming) {
+    if(s->tos == -1) 
+        return 1;
+    char in_stack = s->arr[s->tos];
+    
+    if(incoming == ')' || in_stack == ')') {
+        return 1;
+    }
+    switch(incoming) {
+        case '*':
+        case '/':
+        case '%':
+            return 1;
+        default:
+            switch(in_stack) {
+                case '+':
+                case '-':
+                    return 1;
+                default:
+                    return 0;
+            }
+    }
 }
 
-int is_operator(char c) {
-	switch(c) {
-		case '+':
-		case '-':
-		case '/':
-		case '*':
-		case '%':
-			return 1;
-		default:
-			return 0;
-	}
-}
-
-int is_empty(STACK* stack) {
-	return stack->tos == -1;
-}
-
-char *infix_to_prefix(char* infix) {
-	char *rev = reverse(infix);
-	STACK* stack = initialize_stack(strlen(infix));
-	char c, op;
-	char *prefix = (char *) calloc(strlen(infix) + 1, sizeof(char));
-	int ind=-1;
-
-	for(int i=0; rev[i] != '\0'; i++) {
-		c = rev[i];
-
-		if(c == '(') {
-			while(op = pop(stack) && op != ')') {
-				prefix[++ind] = op;
-			}
-			continue;
-		}
-		if(c == '(') {
-			push(stack, c);
-			continue;
-		}
-
-		if(is_operator(c)) {
-			while(!is_empty(stack) && (op=pop(stack)) && check_precedence(op, c)) 
-				prefix[++ind] = op;
-			push(stack, c);
-			continue;
-		}
-		prefix[++ind] = c;
-	}
-	while(!is_empty(stack)) 
-		prefix[++ind] = pop(stack);
-	prefix[++ind] = '\0';
-
-	free(rev);
-
-	rev = reverse(prefix);
-
-	free(prefix);
-	free_stack(stack);
-
-	return rev;
-}
-
-int check_precedence(char op1, char op2) {
-	switch(op1) {
-		case '*':
-		case '/':
-		case '%':
-			switch(op2) {
-				case '*':
-				case '/':
-				case '%':
-					return 0;
-				default:
-					return 1;
-			}
-		default:
-			switch(op2) {
-				case '+':
-				case '-':
-					return 0;
-				default:
-					return 1;
-			}
-	}
+char* string_reverse(char *str) {
+    int len = strlen(str);
+    char *rev = (char *) calloc(strlen(str) + 1, sizeof(char));
+    for(int i=0; i < len; i++) {
+        rev[i] = str[len-1-i];
+    }
+    rev[len] = '\0';
+    return rev;
 }
