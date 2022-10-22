@@ -80,34 +80,40 @@ cqueue2* initialize_cqueue2(int size) {
 	cqueue2* cq = (cqueue2 *) malloc(sizeof(cqueue2));
 	cq->arr = (int *) calloc(size, sizeof(int));
 	cq->front[0] = cq->rear[0] = cq->bounds[0] = 0;
-	cq->front[1] = cq->rear[1] = cq->bounds[1] = size/2 + 1;
+	cq->front[1] = cq->rear[1] = cq->bounds[1] = size/2;
 	cq->bounds[2] = size;
+
+    	return cq;
 }
 
 void insertcq(cqueue2* cq, int ele, int q) {
-	if(cq->bounds[q-1]+(cq->rear[q-1]+1)%(cq->bounds[q]-cq->bounds[q-1]) == cq->front[q-1]) {
+	int pos;
+	pos = (cq->rear[q-1]+1 >= cq->bounds[q]) ? cq->bounds[q-1] : cq->rear[q-1]+1; 
+	if(pos == cq->front[q-1]) {
 		printf("Queue Full\n");
 		return;
 	}
-	cq->rear[q-1] = cq->bounds[q-1] + (cq->rear[q-1] + 1) % (cq->bounds[q] - cq->bounds[q-1]);
+	cq->rear[q-1] = pos;
 	cq->arr[cq->rear[q-1]] = ele;
 }
 
 int deletecq(cqueue2* cq, int q) {
 	int x;
-
-	if(cq->front[q-1] == cq->front[q-1]) 
-		return -5555;
-	else if(cq->bounds[q-1] + (cq->front[q-1]+1)%(cq->bounds[q]-cq->bounds[q-1]) == cq->rear[q-1]) {
+	int pos;
+	pos = (cq->front[q-1] + 1 >= cq->bounds[q]) ? cq->bounds[q-1] : cq->front[q-1] + 1;
+	if(cq->front[q-1] == cq->rear[q-1]) 
+		x =  -5555;
+	else if(pos == cq->rear[q-1]) {
 		x = cq->arr[cq->rear[q-1]];
 		cq->front[q-1] = cq->rear[q-1] = cq->bounds[q-1];
-		return x;
 	}
 	else {
-		cq->front[q-1] = cq->bounds[q-1] + (cq->front[q-1]+1) % (cq->bounds[q]-cq->bounds[q-1]);
-		return cq->arr[cq->front[q-1]];
+		cq->front[q-1] = pos;
+		x =  cq->arr[cq->front[q-1]];
 	}
+    return x;
 }
+
 
 void displaycq(cqueue2* cq, int q) {
 	if(cq->front[q-1] == cq->bounds[q-1] && cq->rear[q-1] == cq->bounds[q-1]) {
@@ -116,10 +122,10 @@ void displaycq(cqueue2* cq, int q) {
 	}
 
 	printf("Queue is:\n");
-	int i = cq->bounds[q-1] + (cq->front[q-1]+1)%(cq->bounds[q]-cq->bounds[q-1]);
+	int i = (cq->front[q-1] + 1 >= cq->bounds[q]) ? cq->bounds[q-1] : cq->front[q-1] + 1;
 	while(i != cq->rear[q-1]) {
 		printf("\t%d", cq->arr[i]);
-		i = cq->bounds[q-1] +(i+1)%(cq->bounds[q]-cq->bounds[q-1]);
+		i = (i+1 >= cq->bounds[q]) ? cq->bounds[q-1]: i+1;
 	}
 	printf("\t%d", cq->arr[cq->rear[q-1]]);
 	printf("\n");
