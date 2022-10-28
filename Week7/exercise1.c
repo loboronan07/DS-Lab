@@ -5,24 +5,28 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
+#include <string.h>
 #define MAX 10
 
 typedef struct {
-	int arr[MAX];
+	char* arr[MAX];
 	int front;
 	int rear;
 } cqueue;
 
-void insertcq(cqueue *, int);
-void displaycq(cqueue);
-int deletecq(cqueue *);
+void insertcq(cqueue *, char *);
+void displaycq(cqueue *);
+char* deletecq(cqueue *);
+void freecq(cqueue *);
 
 
 int main() {
 	cqueue cq;
 	cq.front = 0;
 	cq.rear = 0;
-	int ch,x,flag = 1;
+	int ch,flag = 1;
+	char ele[50];
+	char* x;
 
 	printf("Available Operations:\n");
 	printf("\t1. Insert Queue\n\t2. Delete Queue\n\t3. Display Queue\n\t4. Exit\n");
@@ -32,19 +36,20 @@ int main() {
 		scanf("%d",&ch);
 		switch(ch) {
 			case 1:
-				printf("Enter the Element: ");
-				scanf("%d", &x);
-				insertcq(&cq, x);
+				printf("Enter the String Element: ");
+				scanf(" %[^\n]s", ele);
+				insertcq(&cq, ele);
 				break;
 			case 2:
 				x = deletecq(&cq);
-				if(x == -5555)
+				if(x == NULL)
 					printf("Queue Empty...\n");
 				else
-					printf("Removed %d from the Queue\n", x);
+					printf("Removed %s from the Queue\n", x);
+					free(x);
 				break;
 			case 3:
-				displaycq(cq);
+				displaycq(&cq);
 				break;
 			case 4:
 				flag = 0;
@@ -53,43 +58,58 @@ int main() {
 				printf("\nWrong choice!!! Try Again.\n");
 		}
 	}
+
+	freecq(&cq);
+
 	return 0;
 }
 
-void insertcq(cqueue *cq, int ele) {
+void insertcq(cqueue *cq, char* ele) {
 	if((cq->rear+1)%MAX == cq->front) {
 		printf("Queue Full\n");
 		return;
 	}
 	cq->rear = (cq->rear+1) % MAX;
-	cq->arr[cq->rear] = ele;
+	cq->arr[cq->rear] = (char*) calloc(strlen(ele)+1, sizeof(char));
+	strcpy(cq->arr[cq->rear], ele);
 }
 
-int deletecq(cqueue *cq) {
-	int x;
+char* deletecq(cqueue *cq) {
+	char* x;
 	if(cq->front == cq->rear) {
-		return -5555;
+		x = NULL;
 	}
 	else if((cq->front+1)%MAX == cq->rear) {
 		x = cq->arr[cq->rear];
+		cq->arr[cq->rear] = NULL;
 		cq->front = cq->rear = 0;
-		return x;
+		
 	}
 	else {
 		cq->front = (cq->front+1) % MAX;
-		return cq->arr[cq->front];
+		x = cq->arr[cq->front];
+		cq->arr[cq->front] = NULL;
 	}
+	return x;
 }
 
-void displaycq(cqueue cq) {
-	if(cq.front == 0 && cq.rear == 0) {
+void displaycq(cqueue* cq) {
+	if(cq->front == 0 && cq->rear == 0) {
 		printf("Queue is Empty!!!\n");
 		return;
 	}
 	
 	printf("Queue is:\n");
-	for(int i = (cq.front+1)%MAX; i != cq.rear; i = (i+1)%MAX) 
-		printf("\t%d", cq.arr[i]);
-	printf("\t%d", cq.arr[cq.rear]);
+	for(int i = (cq->front+1)%MAX; i != cq->rear; i = (i+1)%MAX) 
+		printf("\t%s\n", cq->arr[i]);
+	printf("\t%s", cq->arr[cq->rear]);
 	printf("\n");
+}
+
+void freecq(cqueue* cq) {
+	if(cq->front == 0 && cq->rear == 0) 
+		return;
+	for(int i = (cq->front+1)%MAX; i != cq->rear; i = (i+1)%MAX) 
+		free(cq->arr[i]);
+	free(cq->arr[cq->rear]);
 }
