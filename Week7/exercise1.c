@@ -44,9 +44,10 @@ int main() {
 				x = deletecq(&cq);
 				if(x == NULL)
 					printf("Queue Empty...\n");
-				else
-					printf("Removed %s from the Queue\n", x);
+				else {
+					printf("Removed \"%s\" from the Queue\n", x);
 					free(x);
+				}
 				break;
 			case 3:
 				displaycq(&cq);
@@ -83,7 +84,6 @@ char* deletecq(cqueue *cq) {
 		x = cq->arr[cq->rear];
 		cq->arr[cq->rear] = NULL;
 		cq->front = cq->rear = 0;
-		
 	}
 	else {
 		cq->front = (cq->front+1) % MAX;
@@ -101,8 +101,8 @@ void displaycq(cqueue* cq) {
 	
 	printf("Queue is:\n");
 	for(int i = (cq->front+1)%MAX; i != cq->rear; i = (i+1)%MAX) 
-		printf("\t%s\n", cq->arr[i]);
-	printf("\t%s", cq->arr[cq->rear]);
+		printf("\t\"%s\"\n", cq->arr[i]);
+	printf("\t\"%s\"", cq->arr[cq->rear]);
 	printf("\n");
 }
 

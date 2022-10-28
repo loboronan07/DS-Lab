@@ -18,8 +18,8 @@ void insertcq(cqueue *, int);
 void displaycq(cqueue *);
 int deletecq(cqueue *);
 cqueue* initialize_cqueue(int);
-void free_cqueue(cqueue *cq);
-int searchcq(cqueue *cq, int ele);
+void free_cqueue(cqueue *);
+int searchcq(cqueue *, int);
 
 int main() {
     int n, flag=1, ch, ele;
@@ -92,17 +92,17 @@ void insertcq(cqueue *cq, int ele) {
 int deletecq(cqueue *cq) {
 	int x;
 	if(cq->front == cq->rear) {
-		return -5555;
+		x = -5555;
 	}
 	else if((cq->front+1)%cq->size == cq->rear) {
 		x = cq->arr[cq->rear];
 		cq->front = cq->rear = 0;
-		return x;
 	}
 	else {
 		cq->front = (cq->front+1) % cq->size;
-		return cq->arr[cq->front];
+		x = cq->arr[cq->front];
 	}
+	return x;
 }
 
 void displaycq(cqueue *cq) {

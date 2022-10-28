@@ -82,7 +82,7 @@ int enqueue(QUEUE* q, int ele) {
 
 int dequeue(QUEUE* q) {
     int popped;
-	int flag = (q->op= 'e') ? 1:0;
+	int flag = (q->op == 'e') ? 1:0;
     while(flag) {
         popped = pop(q->s1);
         if(popped != -5555) 

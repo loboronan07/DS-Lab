@@ -82,8 +82,7 @@ cqueue2* initialize_cqueue2(int size) {
 	cq->front[0] = cq->rear[0] = cq->bounds[0] = 0;
 	cq->front[1] = cq->rear[1] = cq->bounds[1] = size/2;
 	cq->bounds[2] = size;
-
-    	return cq;
+	return cq;
 }
 
 void insertcq(cqueue2* cq, int ele, int q) {
