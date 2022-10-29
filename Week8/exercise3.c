@@ -15,13 +15,13 @@ typedef struct {
 
 int isPalin(char *);
 void insert(dequeue *, char);
-char* delete(dequeue *, int);
+char delete(dequeue *, int);
 void freeq(dequeue *);
 
 int main() {
 	char str[100];
 
-	printf("Enter a Sting: ");
+	printf("Enter a String: ");
 	scanf("%[^\n]s", str);
 
 	if(isPalin(str)) 
@@ -38,61 +38,56 @@ int isPalin(char* str) {
 	q->front = q->rear = 0;
 	q->arr = (char*) calloc(q->size, sizeof(char));
 
-	while(str != '\0') 
-		insert(q, *str);
+	while(*str != '\0') 
+		insert(q, *(str++));
 
 	int flag = 1;
 	char f, r;
+	f = delete(q, 0);
+	r = delete(q, 1);
+	while(f != '\0' && r != '\0') {
+		if(f != r) {
+			flag = 0;
+			break;
+		}
+		f = delete(q, 0);
+		r = delete(q, 1);
+	}
+
+	freeq(q);
 	
+	return flag;
 }
 
-void insert(dequeue *q, char ele, int i) {
-	if((q->rear+1)%MAX == q->front) {
+void insert(dequeue *q, char ele) {
+	if((q->rear+1) % q->size == q->front) {
 		printf("Queue Full\n");
 		return;
 	}
-
-	int pos;
-	if(!i) {
-		pos = q->front;
-		q->front = (q->front-1 >= 0) ? q->front-1 : MAX-1;
-	}
-	else 
-		q->rear = pos = (q->rear+1) % MAX;
-
-	q->arr[pos] = (char*) calloc(strlen(ele)+1, sizeof(char));
-	strcpy(q->arr[pos], ele);
+	q->rear = (q->rear+1) % q->size;
+	q->arr[q->rear] = ele;
 }
 
-char delete(dequeue *q) {
-	char* x;
+char delete(dequeue *q, int i) {
+	char x;
 	if(q->front == q->rear) {
-		x = NULL;
+		x = '\0';
 	}
-	else if((q->front+1)%MAX == q->rear) {
+	else if((q->front+1) % q->size == q->rear) {
 		x = q->arr[q->rear];
-		q->arr[q->rear] = NULL;
 		q->front = q->rear = 0;
 	}
 	else {
-		q->front = (q->front+1) % MAX;
-		x = q->arr[q->front];
-		q->arr[q->front] = NULL;
+		if(!i) {
+			q->front = (q->front+1) % q->size;
+			x = q->arr[q->front];
+		}
+		else {
+			x = q->arr[q->rear];
+			q->rear = (q->rear-1 >= 0) ? q->rear-1 : q->size-1;
+		}
 	}
 	return x;
-}
-
-void display(dequeue* q) {
-	if(q->front == 0 && q->rear == 0) {
-		printf("Queue is Empty!!!\n");
-		return;
-	}
-	
-	printf("Queue is:\n");
-	for(int i = (q->front+1)%MAX; i != q->rear; i = (i+1)%MAX) 
-		printf("\t\"%s\"\n", q->arr[i]);
-	printf("\t\"%s\"", q->arr[q->rear]);
-	printf("\n");
 }
 
 void freeq(dequeue* q) {
