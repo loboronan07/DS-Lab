@@ -107,7 +107,7 @@ char* delete(dequeue *q) {
 }
 
 void display(dequeue* q) {
-	if(q->front == 0 && q->rear == 0) {
+	if(q->front == q->rear) {
 		printf("Queue is Empty!!!\n");
 		return;
 	}
@@ -120,7 +120,7 @@ void display(dequeue* q) {
 }
 
 void freeq(dequeue* q) {
-	if(q->front == 0 && q->rear == 0) 
+	if(q->front == q->rear) 
 		return;
 	for(int i = (q->front+1)%MAX; i != q->rear; i = (i+1)%MAX) 
 		free(q->arr[i]);

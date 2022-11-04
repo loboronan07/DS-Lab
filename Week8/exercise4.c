@@ -32,7 +32,7 @@ int main() {
 	queue* q = initialize(n);
 
 	printf("Available Operations:\n");
-	printf("\t1. Insert Queue\n\t2. Delete Queue\n\t3. Display Queue\n\t4. Reverse Queuet\n\t5. Exit\n");
+	printf("\t1. Insert Queue\n\t2. Delete Queue\n\t3. Display Queue\n\t4. Reverse Queue\n\t5. Exit\n");
 
 	while(flag) {
 		printf("\nEnter your choice: ");
@@ -116,7 +116,7 @@ void display(queue *q) {
 }
 
 int empty(queue* q) {
-	return q->front == 0 && q->rear == 0;
+	return q->front == q->rear;
 }
 
 void reverse(queue* q) {

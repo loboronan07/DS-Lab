@@ -7,24 +7,18 @@
 #define MAX 15
 
 typedef struct {
-	int val;
-	int priority;
-} ele;
-
-typedef struct {
-	ele arr[MAX];
+	int arr[MAX];
 	int front;
 	int rear;
 } apq;
 
 apq* initialize();
-void pqinsert(apq*, ele);
+void pqinsert(apq*, int);
 int pqmindelete(apq*);
 
 int main() {
 	apq* q = initialize();
 	int ch,flag = 1;
-	ele x;
 	int val;
 
 	printf("Available Operations:\n");
@@ -36,11 +30,8 @@ int main() {
 		switch(ch) {
 			case 1:
 				printf("Enter the element: ");
-				scanf("%d", &x.val);
-				printf("Enter priority(0 to 10) for %d: ", x.val);
-				scanf("%d", &x.priority);
-				x.priority = (x.priority < 0) ? 0 : ((x.priority > 10) ? 10 : x.priority);
-				pqinsert(q, x);
+				scanf("%d", &val);
+				pqinsert(q, val);
 				break;
 			case 2:
 				val = pqmindelete(q);
@@ -68,7 +59,7 @@ apq* initialize() {
 	return q;
 }
 
-void pqinsert(apq *q, ele x) {
+void pqinsert(apq *q, int x) {
 	if((q->rear+1)%MAX == q->front) {
 		printf("Queue Full\n");
 		return;
@@ -83,18 +74,18 @@ int pqmindelete(apq *q) {
 		x = -5555;
 	}
 	else if((q->front+1)%MAX == q->rear) {
-		x = q->arr[q->rear].val;
+		x = q->arr[q->rear];
 		q->front = q->rear = 0;
 	}
 	else {
 		pos = (q->front+1)%MAX;
 		for(int i = (q->front+1)%MAX; i != q->rear; i = (i+1)%MAX) 
-			if(q->arr[i].priority > q->arr[pos].priority)
+			if(q->arr[i] < q->arr[pos])
 				pos = i;
-		if(q->arr[q->rear].priority > q->arr[pos].priority)
+		if(q->arr[q->rear] < q->arr[pos])
 			pos = q->rear;
 		
-		x = q->arr[pos].val;
+		x = q->arr[pos];
 
 		for(int i=pos; i != q->rear; i = (i+1)%MAX)
 			q->arr[i] = q->arr[(i+1) % MAX];
