@@ -120,9 +120,12 @@ void display(dequeue* q) {
 }
 
 void freeq(dequeue* q) {
-	if(q->front == q->rear) 
+	if(q->front == q->rear) {
+		free(q)
 		return;
+	}
 	for(int i = (q->front+1)%MAX; i != q->rear; i = (i+1)%MAX) 
 		free(q->arr[i]);
 	free(q->arr[q->rear]);
+	free(q);
 }
