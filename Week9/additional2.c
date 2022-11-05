@@ -14,6 +14,24 @@ typedef struct node {
 node* getll();
 void freell(node*);
 void reverse(node**);
+void display(node*);
+
+int main() {
+	node* head = getll();
+
+	printf("\nOriginal Linked List Contains:");
+	display(head);
+
+	printf("\nReversing the Linked List...\n");
+	reverse(&head);
+
+	printf("\nAfter Reversing Linked List Contains:");
+	display(head);
+
+	freell(head);
+
+	return 0;
+}
 
 node* getll() {
 	int n;
@@ -46,7 +64,7 @@ void display(node* head) {
 		printf("Linked List is Empty!!!\n");
 		return;
 	}
-	printf("Linked List Contains:");
+	
 	while(head != NULL) {
 		printf("\n\t%s", head->data);
 		head = head->next;
@@ -65,12 +83,15 @@ void freell(node* head) {
 }
 
 void reverse(node** head) {
-	if(*head->next == NULL) {
+	if((*head)->next == NULL) {
 		return;
 	}
 	node *temp = *head;
 	*head = (*head)->next;
+	temp->next = NULL;
+
 	reverse(head);
+
 	node *curr = *head;
 	while(curr->next != NULL) 
 		curr = curr->next;
