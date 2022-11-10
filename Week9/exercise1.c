@@ -10,13 +10,19 @@ typedef struct node {
 	struct node* next;
 } node;
 
-void enqueue(node**, int);
-int dequeue(node**);
-void display(node*);
-void freell(node*);
+typedef struct {
+    node* front;
+    node* rear;
+} queue;
+
+queue* initialize();
+void enqueue(queue*, int);
+int dequeue(queue*);
+void display(queue*);
+void freeq(queue*);
 
 int main() {
-	node *head = NULL;
+    queue* q = initialize();
 	int ch, flag=1, ele;
 
 	printf("Available Operations:\n");
@@ -29,10 +35,10 @@ int main() {
 			case 1:
 				printf("Enter the Element: ");
 				scanf("%d", &ele);
-				enqueue(&head, ele);
+				enqueue(q, ele);
 				break;
 			case 2:
-				ele = dequeue(&head);
+				ele = dequeue(q);
 				if(ele == -5555)
 					printf("Queue Empty...\n");
 				else {
@@ -40,7 +46,7 @@ int main() {
 				}
 				break;
 			case 3:
-				display(head);
+				display(q);
 				break;
 			case 4:
 				flag = 0;
@@ -50,57 +56,67 @@ int main() {
 		}
 	}
 
-	freell(head);
+	freeq(q);
 
 	return 0;
 }
 
-void enqueue(node** head, int ele) {
+queue* initialize() {
+    queue* q = (queue*) malloc(sizeof(queue));
+    q->front = NULL;
+    q->rear = NULL;
+    return q;
+}
+
+void enqueue(queue* q, int ele) {
 	node* temp = (node*) malloc(sizeof(node));
 	temp->data = ele;
 	temp->next = NULL;
 
-	if(*head == NULL) 
-		*head = temp;
+	if(q->rear == NULL) 
+		q->front = q->rear = temp;
 	else {
-		node* last = *head;
-		while(last->next != NULL) 
-			last = last->next;
-		last->next = temp;
+		q->rear->next = temp;
+        q->rear = temp;
 	}
 }
 
-int dequeue(node** head) {
+int dequeue(queue* q) {
 	int x;
-	if(*head == NULL) 
+	if(q->front == NULL) 
 		x = -5555;
 	else {
-		node* temp = *head;
-		*head = (*head)->next;
+		node* temp = q->front;
+		if(q->front->next == NULL) 
+            q->front = q->rear = NULL;
+        else   
+            q->front = q->front->next;
 		x = temp->data;
 		free(temp);
 	}
 	return x;
 }
 
-void display(node* head) {
-	if(head == NULL) {
+void display(queue* q) {
+	if(q->front == NULL) {
 		printf("Queue is Empty!!!\n");
 		return;
 	}
+    node* temp = q->front;
 	printf("Queue is:\n");
-	while(head != NULL) {
-		printf("\t%d", head->data);
-		head = head->next;
+	while(temp != NULL) {
+		printf("\t%d", temp->data);
+		temp = temp->next;
 	}
 	printf("\n");
 }
 
-void freell(node* head) {
-	node* temp;
-	while(head != NULL) {
-		temp = head;
-		head = head->next;
+void freeq(queue* q) {
+    node* temp;
+	node* curr = q->front;
+	while(curr != NULL) {
+		temp = curr;
+		curr = curr->next;
 		free(temp);
 	}
 }
