@@ -2,9 +2,6 @@
 	Create a circular singly linked LIST by merging two sorted singly circular linked
 	lists containing char data, such that the final LIST is sorted
 */
- 
-// Self Note
-// Optimize merge to delete duplicate values
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +14,7 @@ typedef struct node {
 node* getll();
 void display(node*);
 node* merge(node*, node*);
+int checkdup(node*, char);
 void freell(node*);
 
 int main() {
@@ -83,35 +81,62 @@ node* merge(node* A, node* B) {
 	node *head, *temp;
 	head = temp = (node*) malloc(sizeof(node));
 	head->data = '\0';
+	head->next = head;
 	A = A->next; B = B->next;
 
+	int flag;
+	char c;
+
 	while(A->data != '\0' && B->data != '\0') {
-		temp->next = (node*) malloc(sizeof(node));
-		temp = temp->next;
 		if(A->data < B->data) {
-			temp->data = A->data;
+			c = A->data;
 			A = A->next;
 		}
 		else {
-			temp->data = B->data;
+			c = B->data;
 			B = B->next;
+		}
+
+		if(!checkdup(head, c)) {
+			temp->next = (node*) malloc(sizeof(node));
+			temp = temp->next;
+			temp->next = head;
+			temp->data = c;
 		}
 	}
 	while(A->data != '\0') {
-		temp->next = (node*) malloc(sizeof(node));
-		temp = temp->next;
-		temp->data = A->data;
+		if(!checkdup(head, A->data)) {
+			temp->next = (node*) malloc(sizeof(node));
+			temp = temp->next;
+			temp->next = head;
+			temp->data = A->data;
+		}
 		A = A->next;
 	}
 	while(B->data != '\0') {
-		temp->next = (node*) malloc(sizeof(node));
-		temp = temp->next;
-		temp->data = B->data;
+		if(!checkdup(head, B->data)) {
+			temp->next = (node*) malloc(sizeof(node));
+			temp = temp->next;
+			temp->next = head;
+			temp->data = B->data;
+		}
 		B = B->next;
 	}
-	temp->next = head;
 
 	return head;
+}
+
+int checkdup(node* head, char c) {
+	int flag = 0;
+	head = head->next;
+	while(head->data != '\0') {
+		if(head->data == c) {
+			flag = 1;
+			break;
+		}
+		head = head->next;
+	}
+	return flag;
 }
 
 void freell(node* head) {
