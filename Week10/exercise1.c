@@ -12,10 +12,8 @@ typedef struct node {
 	struct node* prev;
 } node;
 
-void insertf(node**, int);
-void inserte(node**, int);
-int deletef(node**);
-int deletee(node**);
+void insert(node**, int, int);
+int delete(node**, int);
 void display(node*);
 void freell(node**);
 
@@ -35,29 +33,16 @@ int main(void) {
 		printf("\nEnter you Operation: ");
 		scanf("%d", &choice);
 
-		if(choice == 1) {
+		if(choice == 1 || choice == 2) {
 			printf("Enter the value to insert: ");
 			scanf("%d", &ele);
-
-			insertf(&head, ele);
+			if(choice == 1)
+				insert(&head, ele, 0);
+			else 
+				insert(&head, ele, 1);
 		}
-		else if(choice == 2) {
-			printf("Enter the value to insert: ");
-			scanf("%d", &ele);
-
-			inserte(&head, ele);
-		}
-		else if(choice == 3) {
-			ele = deletef(&head);
-			if(ele != -5555) {
-				printf("%d was deleted from the linked list...\n", ele);
-			}
-			else {
-				printf("Linked list is Empty...\n");
-			}
-		}
-		else if(choice == 4) {
-			ele = deletee(&head);
+		else if(choice == 3 || choice == 4) {
+			ele = choice == 3 ? delete(&head, 0) : delete(&head, 1);
 			if(ele != -5555) {
 				printf("%d was deleted from the linked list...\n", ele);
 			}
@@ -79,64 +64,40 @@ int main(void) {
 }
 
 
-void insertf(node** head, int ele) {
+void insert(node** head, int ele, int end) {
 	node* temp = (node*) malloc(sizeof(node));
 	temp->data = ele;
-	temp->next = *head;
 	temp->prev = NULL;
-	if(*head)
-		(*head)->prev = temp;
-	*head = temp;
-}
 
-
-void inserte(node** head, int ele) {
-	node* temp = (node*) malloc(sizeof(node));
-	temp->data = ele;
-	temp->next = NULL;
-
-	if(*head == NULL) {
+	if(!end || *head == NULL) {
+		temp->next = *head;
+		if(*head)
+			(*head)->prev = temp;
 		*head = temp;
-		temp->prev = NULL;
-		return;
 	}
+	else {
+		node *curr = *head;
+		while(curr->next != NULL) {
+			curr = curr->next;
+		}
 
-	node *curr;
-	curr = *head;
-
-	while(curr->next != NULL) {
-		curr = curr->next;
+		curr->next = temp;
+		temp->prev = curr;
 	}
-
-	curr->next = temp;
-	temp->prev = curr;
 }
 
-int deletef(node** head) {
+int delete(node** head, int end) {
 	int ele;
 	if(*head == NULL) {
 		ele = -5555;
 	}
-	else {
+	else if(!end || (*head)->next == NULL) {
 		ele = (*head)->data;
 		node* temp = *head;
 		*head = (*head)->next;
 		if(*head)
 			(*head)->prev = NULL;
 		free(temp);
-	}
-	return ele;
-}
-
-int deletee(node** head) {
-	int ele;
-	if(*head == NULL) {
-		ele = -5555;
-	}
-	else if((*head)->next == NULL) {
-		ele = (*head)->data;
-		free(*head);
-		*head = NULL;
 	}
 	else {
 		node* curr = *head;

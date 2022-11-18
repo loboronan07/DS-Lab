@@ -20,12 +20,12 @@ void freell(node**);
 int main(void) {
 	node* head = initialize();
 
-	printf("Original Linked List Contains:\n");
+	printf("\nOriginal Linked List Contains:\n");
 	display(head);
 
 	reverse(&head);
 
-	printf("After Reversing Linked List Contains:\n");
+	printf("\nAfter Reversing Linked List Contains:\n");
 	display(head);
 
 	freell(&head);
