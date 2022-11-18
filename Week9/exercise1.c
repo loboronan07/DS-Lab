@@ -57,7 +57,7 @@ int main() {
 	}
 
 	freeq(q);
-
+	free(q);
 	return 0;
 }
 
