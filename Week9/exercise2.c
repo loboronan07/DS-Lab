@@ -14,6 +14,8 @@ typedef struct node {
 node* getll();
 void display(node*);
 void freell(node*);
+void insert(node**, int);
+void delduplicates(node*);
 node* unionll(node*, node*);
 node* intersectll(node*, node*);
 
@@ -49,7 +51,7 @@ int main() {
 
 
 node* getll() {
-	int n;
+	int n, ele;
 	printf("Enter the number of elements: ");
 	scanf("%d", &n);
 
@@ -57,13 +59,8 @@ node* getll() {
 
 	printf("Enter the elements: ");
 	for(int i=0; i<n; i++) {
-		if(head == NULL)
-			head = temp = (node*) malloc(sizeof(node));
-		else {
-			temp->next = (node*) malloc(sizeof(node));
-			temp = temp->next;
-		}
-		scanf("%d", &temp->data);
+		scanf("%d", &ele);
+		insert(&head, ele);
 	}
 	if(head)
 		temp->next = NULL;
@@ -93,59 +90,60 @@ void freell(node* head) {
 	}
 }
 
-node* unionll(node* A, node* B) {
-	node *curr;
-	node *head = NULL, *temp;
-	int flag;
-	while(A != NULL) {
-		flag = 1;
-		for(curr = head; curr != NULL; curr = curr->next)
-			if(curr->data == A->data) {
-				flag = 0;
-				break;
-			}
+void insert(node** head, int ele) {
+	node* temp = (node*) malloc(sizeof(node));
+	temp->data = ele;
+	temp->next = NULL;
 
-		if(flag) {
-			if(head == NULL) 
-				head = temp = (node*) malloc(sizeof(node));
+	if(*head == NULL) 
+		*head = temp;
+	else {
+		node* curr = *head;
+		while(curr->next != NULL) 
+			curr = curr->next;
+		curr->next = temp;
+	}
+}
+
+void delduplicates(node* head) {
+	node *curr, *prev;
+
+	while(head != NULL) {
+		prev = head;
+		curr = head->next;
+		while(curr != NULL) {
+			if(curr->data == head->data) { 
+				prev->next = curr->next;
+				free(curr);
+				curr = prev->next;
+			}
 			else {
-				temp->next = (node*) malloc(sizeof(node));
-				temp = temp->next;
+				prev = curr;
+				curr = curr->next;
 			}
-			temp->data = A->data;
 		}
+		head = head->next;
+	}
+}
 
+node* unionll(node* A, node* B) {
+	node *head = NULL;
+	while(A != NULL) {
+		insert(&head, A->data);
 		A = A->next;
 	}
 	while(B != NULL) {
-		flag = 1;
-		for(curr = head; curr != NULL; curr = curr->next)
-			if(curr->data == B->data) {
-				flag = 0;
-				break;
-			}
-
-		if(flag) {
-			if(head == NULL) 
-				head = temp = (node*) malloc(sizeof(node));
-			else {
-				temp->next = (node*) malloc(sizeof(node));
-				temp = temp->next;
-			}
-			temp->data = B->data;
-		}
-
+		insert(&head, B->data);
 		B = B->next;
 	}
-	if(head) 
-		temp->next = NULL;
+
+	delduplicates(head);
 
 	return head;
 }
 
 node* intersectll(node* A, node* B) {
-	node *curr;
-	node *head = NULL, *temp;
+	node *head = NULL, *curr;
 	int flag;
 	while(A != NULL) {
 		flag = 0;
@@ -154,26 +152,14 @@ node* intersectll(node* A, node* B) {
 				flag = 1;
 				break;
 			}
-		for(curr = head; curr != NULL; curr = curr->next)
-			if(curr->data == A->data) {
-				flag = 0;
-				break;
-			}
-
 		if(flag) {
-			if(head == NULL) 
-				head = temp = (node*) malloc(sizeof(node));
-			else {
-				temp->next = (node*) malloc(sizeof(node));
-				temp = temp->next;
-			}
-			temp->data = A->data;
+			insert(&head, A->data);
 		}
 
 		A = A->next;
 	}
-	if(head) 
-		temp->next = NULL;
+
+	delduplicates(head);
 
 	return head;
 }

@@ -13,8 +13,8 @@ typedef struct node {
 
 node* getll();
 void display(node*);
+void insert(node**, char);
 node* merge(node*, node*);
-int checkdup(node*, char);
 void freell(node*);
 
 int main() {
@@ -77,66 +77,53 @@ void display(node* head) {
 	printf("\n");
 }
 
+void insert(node** head, char ele) {
+	node* temp = (node*) malloc(sizeof(node));
+	temp->data = ele;
+	temp->next = *head;
+
+	if((*head)->next == *head) 
+		(*head)->next = temp;
+	else {
+		node* curr = (*head)->next, *prev;
+		while(curr != *head && curr->data < ele) {
+			prev = curr;
+			curr = curr->next;
+		}
+		if(curr->data != ele) {
+			prev->next = temp;
+			temp->next = curr;
+		}
+	}
+}
+
 node* merge(node* A, node* B) {
-	node *head, *temp;
-	head = temp = (node*) malloc(sizeof(node));
+	node *head;
+	head = (node*) malloc(sizeof(node));
 	head->data = '\0';
 	head->next = head;
 	A = A->next; B = B->next;
 
-	int flag;
-	char c;
-
 	while(A->data != '\0' && B->data != '\0') {
 		if(A->data < B->data) {
-			c = A->data;
+			insert(&head, A->data);
 			A = A->next;
 		}
 		else {
-			c = B->data;
+			insert(&head, B->data);
 			B = B->next;
-		}
-
-		if(!checkdup(head, c)) {
-			temp->next = (node*) malloc(sizeof(node));
-			temp = temp->next;
-			temp->next = head;
-			temp->data = c;
 		}
 	}
 	while(A->data != '\0') {
-		if(!checkdup(head, A->data)) {
-			temp->next = (node*) malloc(sizeof(node));
-			temp = temp->next;
-			temp->next = head;
-			temp->data = A->data;
-		}
+		insert(&head, A->data);
 		A = A->next;
 	}
 	while(B->data != '\0') {
-		if(!checkdup(head, B->data)) {
-			temp->next = (node*) malloc(sizeof(node));
-			temp = temp->next;
-			temp->next = head;
-			temp->data = B->data;
-		}
+		insert(&head, B->data);
 		B = B->next;
 	}
 
 	return head;
-}
-
-int checkdup(node* head, char c) {
-	int flag = 0;
-	head = head->next;
-	while(head->data != '\0') {
-		if(head->data == c) {
-			flag = 1;
-			break;
-		}
-		head = head->next;
-	}
-	return flag;
 }
 
 void freell(node* head) {

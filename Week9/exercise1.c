@@ -41,9 +41,8 @@ int main() {
 				ele = dequeue(q);
 				if(ele == -5555)
 					printf("Queue Empty...\n");
-				else {
+				else
 					printf("Removed %d from the Queue\n", ele);
-				}
 				break;
 			case 3:
 				display(q);
@@ -57,14 +56,12 @@ int main() {
 	}
 
 	freeq(q);
-	free(q);
 	return 0;
 }
 
 queue* initialize() {
     queue* q = (queue*) malloc(sizeof(queue));
-    q->front = NULL;
-    q->rear = NULL;
+    q->front = q->rear = NULL;
     return q;
 }
 
@@ -119,4 +116,5 @@ void freeq(queue* q) {
 		curr = curr->next;
 		free(temp);
 	}
+	free(q);
 }
