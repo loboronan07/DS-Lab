@@ -18,93 +18,131 @@ typedef struct {
 	int tos;
 } stack;
 
-void printorder(node*, int);
-node* create();
-void freetree(node*);
+node* create(char);
+void preorder(node*);
+void inorder(node*);
+void postorder(node*);
+stack* initialize();
 node* pop(stack*);
 void push(stack*, node*);
-stack* initialize();
+node* atTop(stack*);
 
 int main() {
-	printf("Enter the data for the Tree A in the order specified...\n");
-	node* root = create();
+	char data;
+	printf("Enter the data for the Tree in the order specified...\n");
+	printf("Enter data for root(Hit # to exit): ");
+	scanf(" %c", &data);
+	node* root = create(data);
 
 	printf("\nInorder Traversal of the given tree: ");
-	printorder(root, 2);
+	inorder(root);
 	printf("\n");
 
-	printf("Preorder Traversal of the given tree: ");
-	printorder(root, 1);
+	printf("Preorder Traversal of Tree: ");
+	preorder(root);
 	printf("\n");
 
 	printf("Postorder Traversal of the given tree: ");
-	printorder(root, 3);
+	postorder(root);
 	printf("\n");
+
+	return 0;
 }
 
-node* create() {
-	node* root = NULL;
+node* create(char ele){
+	if(ele == '#') 
+		return NULL;
+
+	char x;
+
+	node* temp = (node*) malloc(sizeof(node));
+	temp->data = ele;
+
+	printf("Enter data for left child of %c(Hit # to exit): ", ele);
+	scanf(" %c", &x);
+	temp->left = create(x);
+
+	printf("Enter data for right child of %c(Hit # to exit): ", ele);
+	scanf(" %c", &x);
+	temp->right = create(x);
+
+	return temp;
+}
+
+void preorder(node* root) {
+	if(!root)
+		return;
+	
+	stack* s = initialize();
+	push(s, root);
+
+	node* temp;
+	while(temp = pop(s)) {
+		printf("%c ", temp->data);
+		if(temp->right)
+			push(s, temp->right);
+		if(temp->left)
+			push(s, temp->left);
+	}
+
+	free(s);
+}
+
+void inorder(node* root) {
+	int flag = 0;
+
+	if(!root) 
+		return;
+	
+	stack* s = initialize();
+	node* curr = root;
+	
+	while(!flag) {
+		while(curr != NULL) {
+			push(s, curr);
+			curr = curr->left;
+		}
+
+		if(curr = pop(s)) {
+			printf("%c ", curr->data);
+			curr = curr->right;
+		}
+		else 
+			flag = 1;
+	}
+
+	free(s);
+}
+
+void postorder(node* root) {
+	if(!root) 
+		return;
+
 	stack* s = initialize();
 
-	char ele, elel, eler;
-	node* temp;
+	do {
+		while(root) {
+			if(root->right) 
+				push(s, root->right);
+			push(s, root);
 
-	printf("Enter data for root(Hit # to exit): ");
-	scanf("%c", &ele);
-
-	if(ele != '#') {
-		root = (node*) malloc(sizeof(node));
-		root->data = ele;
-		push(s, root);
-	}
-
-	while(temp = pop(s)) {
-		printf("Enter data for left child of %c(Hit # to exit): ", temp->data);
-		scanf(" %c", &elel);
-		printf("Enter data for right child of %c(Hit # to exit): ", temp->data);
-		scanf(" %c", &eler);
-
-		if(eler != '#') {
-			temp->right = (node*) malloc(sizeof(node));
-			temp->right->data = eler;
-			push(s, temp->right);
+			root = root->left;
 		}
-		else 
-			temp->right = NULL;
 
-		if(elel != '#') {
-			temp->left = (node*) malloc(sizeof(node));
-			temp->left->data = elel;
-			push(s, temp->left);
+		root = pop(s);
+
+		if(root->right && atTop(s) == root->right) {
+			pop(s);
+			push(s, root);
+			root = root->right;
 		}
-		else 
-			temp->left = NULL;
-	}
+		else {
+			printf("%d ", root->data);
+			root = NULL;
+		}
+	} while(atTop(s));
 
-	return root;
-}
-
-void printorder(node* root, int order) {
-	if(!root) 
-		return;
-
-	if(order == 1)
-		printf("%c ", root->data);
-	printorder(root->left, order);
-	if(order == 2)
-		printf("%c ", root->data);
-	printorder(root->right, order);
-	if(order == 3)
-		printf("%c ", root->data);
-}
-
-void freetree(node* root) {
-	if(!root) 
-		return;
-
-	freetree(root->left);
-	freetree(root->right);
-	free(root);
+	free(s);
 }
 
 stack* initialize() {
@@ -121,4 +159,10 @@ node* pop(stack* s) {
 
 void push(stack* s, node* n) {
     s->arr[++(s->tos)] = n;
+}
+
+node* atTop(stack* s) {
+	if(s->tos == -1)
+		return NULL;
+	return s->arr[s->tos];
 }
