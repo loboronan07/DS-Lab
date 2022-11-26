@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#define MAX 30
 
 typedef struct node {
 	char data;
@@ -12,10 +14,19 @@ typedef struct node {
 	struct node* right;
 } node;
 
+typedef struct {
+	struct node* arr[MAX];
+	int tos;
+} stack;
+
+int checkop(char);
 node* create(char*);
 void freetree(node*);
 int evaluate(node*);
 void freetree(node*);
+stack* initialize();
+node* pop(stack*);
+void push(stack*, node*);
 
 int main() {
 	char postfix[50];
@@ -35,8 +46,54 @@ int main() {
 	return 0;
 }
 
-node* create(char* postfix) {
+int checkop(char ele) {
+	switch (ele) {
+		case '+': 
+		case '-':
+		case '*': 
+		case '/':
+		case '%':
+		case '^': 
+			return 1;
+		default:
+			return 0;
+	}
+}
 
+node* getnode(char ele) {
+	node* new = (node*) malloc(sizeof(node));
+	new->data = ele;
+	new->left = new->right = NULL;
+
+	return new;
+}
+
+node* create(char* postfix) {
+	stack* s = initialize();
+	node *root = NULL, *temp;
+
+	char c;
+	int i=0;
+	while(postfix[i]) {
+		c = postfix[i];
+
+		if(checkop(c)) {
+			temp = getnode(c);
+			temp->right = pop(s);
+			temp->left = pop(s);
+			push(s, temp);
+		}
+		else 
+			push(s, getnode(c));
+
+		i++;
+	}
+
+	temp = pop(s);
+
+	free(s);
+
+	return temp;
 }
 
 int evaluate(node* root) {
@@ -68,4 +125,20 @@ void freetree(node* root) {
 	freetree(root->left);
 	freetree(root->right);
 	free(root);
+}
+
+stack* initialize() {
+	stack* s = (stack*) malloc(sizeof(stack));
+	s->tos = -1;
+	return s;
+}
+
+node* pop(stack* s) {
+    if(s->tos == -1)
+        return NULL;
+    return s->arr[(s->tos)--];
+}
+
+void push(stack* s, node* n) {
+    s->arr[++(s->tos)] = n;
 }
