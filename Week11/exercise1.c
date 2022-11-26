@@ -40,6 +40,10 @@ int main() {
 	printf("Postorder Traversal of the given tree: ");
 	printorder(root, 3);
 	printf("\n");
+
+	freetree(root);
+
+	return 0;
 }
 
 node* create() {
