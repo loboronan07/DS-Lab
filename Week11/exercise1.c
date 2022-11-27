@@ -20,6 +20,7 @@ typedef struct {
 
 void printorder(node*, int);
 node* create();
+node* getnode(char);
 void freetree(node*);
 node* pop(stack*);
 void push(stack*, node*);
@@ -69,16 +70,14 @@ node* create() {
 		scanf(" %c", &eler);
 
 		if(eler != '#') {
-			temp->right = (node*) malloc(sizeof(node));
-			temp->right->data = eler;
+			temp->right = getnode(eler);
 			push(s, temp->right);
 		}
 		else 
 			temp->right = NULL;
 
 		if(elel != '#') {
-			temp->left = (node*) malloc(sizeof(node));
-			temp->left->data = elel;
+			temp->left = getnode(elel);
 			push(s, temp->left);
 		}
 		else 
@@ -127,4 +126,12 @@ node* pop(stack* s) {
 
 void push(stack* s, node* n) {
     s->arr[++(s->tos)] = n;
+}
+
+node* getnode(char ele) {
+	node* new = (node*) malloc(sizeof(node));
+	new->data = ele;
+	new->left = new->right = NULL;
+
+	return new;
 }
