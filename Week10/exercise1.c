@@ -36,13 +36,10 @@ int main(void) {
 		if(choice == 1 || choice == 2) {
 			printf("Enter the value to insert: ");
 			scanf("%d", &ele);
-			if(choice == 1)
-				insert(&head, ele, 0);
-			else 
-				insert(&head, ele, 1);
+			insert(&head, ele, choice-1);
 		}
 		else if(choice == 3 || choice == 4) {
-			ele = choice == 3 ? delete(&head, 0) : delete(&head, 1);
+			ele = delete(&head, choice-3);
 			if(ele != -5555) {
 				printf("%d was deleted from the linked list...\n", ele);
 			}
@@ -61,6 +58,7 @@ int main(void) {
 		}
 	}
 	freell(&head);
+	return 0;
 }
 
 
