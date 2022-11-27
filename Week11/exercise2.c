@@ -30,6 +30,7 @@ void inorder(node*);
 void postorder(node*);
 void levelorder(node*);
 node* getnode(char);
+void freetree(node*);
 stack* initializes();
 node* pop(stack*);
 void push(stack*, node*);
@@ -60,6 +61,8 @@ int main() {
 	printf("Levelorder Traversal of the given tree: ");
 	levelorder(root);
 	printf("\n");
+
+	freetree(root);
 
 	return 0;
 }
@@ -165,7 +168,7 @@ void postorder(node* root) {
 			root = root->right;
 		}
 		else {
-			printf("%d ", root->data);
+			printf("%c ", root->data);
 			root = NULL;
 		}
 	} while(atTop(s));
@@ -193,6 +196,15 @@ void levelorder(node* root) {
 	}
 
 	free(q);
+}
+
+void freetree(node* root) {
+	if(!root) 
+		return;
+
+	freetree(root->left);
+	freetree(root->right);
+	free(root);
 }
 
 stack* initializes() {
