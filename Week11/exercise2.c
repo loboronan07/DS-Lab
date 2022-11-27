@@ -18,14 +18,25 @@ typedef struct {
 	int tos;
 } stack;
 
+typedef struct {
+	node* arr[MAX];
+	int front;
+	int rear;
+} queue;
+
 node* create(char);
 void preorder(node*);
 void inorder(node*);
 void postorder(node*);
-stack* initialize();
+void levelorder(node*);
+node* getnode(char);
+stack* initializes();
 node* pop(stack*);
 void push(stack*, node*);
 node* atTop(stack*);
+queue* initializeq();
+void insertq(queue*, node*);
+node* deleteq(queue*);
 
 int main() {
 	char data;
@@ -46,7 +57,19 @@ int main() {
 	postorder(root);
 	printf("\n");
 
+	printf("Levelorder Traversal of the given tree: ");
+	levelorder(root);
+	printf("\n");
+
 	return 0;
+}
+
+node* getnode(char ele) {
+	node* new = (node*) malloc(sizeof(node));
+	new->data = ele;
+	new->left = new->right = NULL;
+
+	return new;
 }
 
 node* create(char ele){
@@ -55,8 +78,7 @@ node* create(char ele){
 
 	char x;
 
-	node* temp = (node*) malloc(sizeof(node));
-	temp->data = ele;
+	node* temp = getnode(ele);
 
 	printf("Enter data for left child of %c(Hit # to exit): ", ele);
 	scanf(" %c", &x);
@@ -70,10 +92,12 @@ node* create(char ele){
 }
 
 void preorder(node* root) {
-	if(!root)
+	if(!root) {
+		printf("Tree is Empty..");
 		return;
+	}
 	
-	stack* s = initialize();
+	stack* s = initializes();
 	push(s, root);
 
 	node* temp;
@@ -91,10 +115,12 @@ void preorder(node* root) {
 void inorder(node* root) {
 	int flag = 0;
 
-	if(!root) 
+	if(!root) {
+		printf("Tree is Empty..");
 		return;
+	}
 	
-	stack* s = initialize();
+	stack* s = initializes();
 	node* curr = root;
 	
 	while(!flag) {
@@ -115,10 +141,12 @@ void inorder(node* root) {
 }
 
 void postorder(node* root) {
-	if(!root) 
+	if(!root) {
+		printf("Tree is Empty..");
 		return;
+	}
 
-	stack* s = initialize();
+	stack* s = initializes();
 
 	do {
 		while(root) {
@@ -145,7 +173,29 @@ void postorder(node* root) {
 	free(s);
 }
 
-stack* initialize() {
+void levelorder(node* root) {
+	if(!root) {
+		printf("Tree is Empty..");
+		return;
+	}
+
+	queue* q = initializeq();
+	node* curr=NULL;
+	
+	insertq(q, root);
+
+	while(curr = deleteq(q)) {
+		printf("%c ", curr->data);
+		if(curr->left)
+			insertq(q, curr->left);
+		if(curr->right) 
+			insertq(q, curr->right);
+	}
+
+	free(q);
+}
+
+stack* initializes() {
 	stack* s = (stack*) malloc(sizeof(stack));
 	s->tos = -1;
 	return s;
@@ -165,4 +215,30 @@ node* atTop(stack* s) {
 	if(s->tos == -1)
 		return NULL;
 	return s->arr[s->tos];
+}
+
+queue* initializeq() {
+	queue* q = (queue*) malloc(sizeof(queue));
+	q->front = 	q->rear = 0;
+	return q;
+}
+
+void insertq(queue *q, node* ele) {
+	q->rear = (q->rear+1) % MAX;
+	q->arr[q->rear] = ele;
+}
+
+node* deleteq(queue *q) {
+	node* x;
+	if(q->front == q->rear) 
+		x = NULL;
+	else if((q->front+1)%MAX == q->rear) {
+		x = q->arr[q->rear];
+		q->front = q->rear = 0;
+	}
+	else {
+		q->front = (q->front+1) % MAX;
+		x = q->arr[q->front];
+	}
+	return x;
 }
