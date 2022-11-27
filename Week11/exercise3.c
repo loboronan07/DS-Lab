@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #define MAX 30
 
 typedef struct node {
@@ -51,8 +50,7 @@ int checkop(char ele) {
 		case '-':
 		case '*': 
 		case '/':
-		case '%':
-		case '^': 
+		case '%': 
 			return 1;
 		default:
 			return 0;
@@ -111,8 +109,6 @@ int evaluate(node* root) {
 		return evaluate(root->left) / evaluate(root->right);
 	else if(op == '%')
 		return evaluate(root->left) % evaluate(root->right);
-	else if(op == '^')
-		return pow(evaluate(root->left), evaluate(root->right));
 	else
 		return op - '0';
 }
