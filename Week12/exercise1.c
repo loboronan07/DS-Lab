@@ -24,7 +24,7 @@ void inorder(node*);
 void freetree(node*);
 
 int main() {
-	int n;
+	int n, ele;
 
 	printf("Enter the number of integers: ");
 	scanf("%d", &n);
@@ -39,6 +39,14 @@ int main() {
 	node* root = create(arr, n);
 
 	printf("Inorder Traversal of the given tree: ");
+	inorder(root);
+	printf("\n");
+
+	printf("Enter the node to be deleted: ");
+	scanf("%d", &ele);
+	delete(&root, ele);	
+
+	printf("Inorder Traversal of the given tree after deletion: ");
 	inorder(root);
 	printf("\n");
 
@@ -86,15 +94,17 @@ void insert(node** root, int ele) {
 		prev->left = temp;
 	else
 		prev->right = temp;
-}
+} 
 
 void delete(node** root, int ele) {
-	if(!*root) 
+	if(!*root) {
+		printf("Tree is Empty..\n");
 		return;
+	}
 
-	node *curr = *root, *prev = NULL;
-	while(curr != NULL && curr->data != ele) {
-		prev = curr;
+	node *curr = *root, *parent = NULL;
+	while(curr && curr->data != ele) {
+		parent = curr;
 		curr = curr->data > ele ? curr->left : curr->right;
 	}
 
@@ -102,27 +112,42 @@ void delete(node** root, int ele) {
 		printf("Element does not exist in the tree...\n");
 		return;
 	}
-	node* piv=curr->left, *prev_piv=curr;
+
+
+	node *piv, *prev_piv;
 	if(curr->left) {
-		
-		while(1) {
-			if(largest->right) {
-				prev_largest = largest;
-				largest = largest->right;
-			}
-			else if(largest->left) {
-				prev_largest = largest;
-				largest = largest->left;
-			}
-			else
-				break;
+		piv = curr->left;
+		prev_piv = curr;
+		while(piv->right) {
+			prev_piv = piv;
+			piv = piv->right;
 		}
+		if(prev_piv != curr)
+			prev_piv->right = piv->left;
+		
+		if(parent)
+			if(parent->left == curr) 
+				parent->left = piv;
+			else
+				parent->right = piv;
+		else 
+			*root = piv;
 
+		if(prev_piv != curr)
+			piv->left = curr->left;
+		piv->right = curr->right;
 	}
-	else if(curr->right){
-
+	else {
+		if(parent)
+			if(parent->left == curr) 
+				parent->left = curr->right;
+			else
+				parent->right = curr->right;
+		else
+			*root = curr->right;
 	}
 
+	free(curr);
 }
 
 void inorder(node* root) {
