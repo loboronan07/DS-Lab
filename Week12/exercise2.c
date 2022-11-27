@@ -20,6 +20,7 @@ typedef struct {
 node* create(int);
 void inorder(node*);
 void freetree(node*);
+int search(node*, int);
 void find_successor(node*, int);
 stack* initialize();
 node* pop(stack*);
@@ -103,7 +104,7 @@ void find_successor(node* root, int ele) {
 
 		if(curr = pop(s)) {
 			if(flag) {
-				printf(" is %d\n", curr->data);
+				printf("is %d\n", curr->data);
 				flag = 0;
 			}
 			if(curr->data == ele) 

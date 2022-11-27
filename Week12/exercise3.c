@@ -101,6 +101,7 @@ void print_ancestors(node* root, int ele) {
             printf("%d ", curr->data);
             curr = ele < curr->data ? curr->left : curr->right;
         }
+        printf("\n");
     }
     else 
         printf("%d does not exist in the BST.\n", ele);

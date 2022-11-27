@@ -39,8 +39,11 @@ int main() {
 
     printf("\nThe Inorder Traversal of the given tree: ");
     inorder(root);
+    printf("\n");
 
     freetree(root);
+    free(pre);
+    free(post);
 
     return 0;
 }

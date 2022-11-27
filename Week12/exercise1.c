@@ -51,6 +51,7 @@ int main() {
 	printf("\n");
 
 	freetree(root);
+	free(arr);
 
 	return 0;
 }
