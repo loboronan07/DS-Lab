@@ -14,6 +14,7 @@ typedef struct node {
 	struct node* next;
 } node;
 
+node* getnode(int, int);
 node* getpoly();
 node* subtract(node*, node*);
 node* multiply(node*, node*);
@@ -50,10 +51,16 @@ int main(void) {
 	return 0;
 }
 
+node* getnode(int exp, int coeff) {
+	node* new = (node*) malloc(sizeof(node));
+	new->exp = exp;
+	new->coeff = coeff;
+	new->next = NULL;
+	return new;
+}
+
 node* getpoly() {
-	node* head = (node*) malloc(sizeof(node));
-	head->exp = -1;
-	head->coeff = 0;
+	node* head = getnode(-1, 0);
 	head->next = head;
 
 	node* temp = NULL;
@@ -73,14 +80,11 @@ node* getpoly() {
 			continue;
 
 		if(head->next == head) 
-			head->next = temp = (node*) malloc(sizeof(node));
+			head->next = temp = getnode(exp, coeff);
 		else {
-			temp->next = (node*) malloc(sizeof(node));
+			temp->next = getnode(exp, coeff);
 			temp = temp->next;
 		}
-
-		temp->coeff = coeff;
-		temp->exp = exp;
 	}
 	if(temp) 
 		temp->next = head;
@@ -113,9 +117,7 @@ void display(node* head) {
 }
 
 node* subtract(node* A, node* B) {
-	node* head = (node*) malloc(sizeof(node));
-	head->exp = -1;
-	head->coeff = 0;
+	node* head = getnode(-1, 0);
 	head->next = head;
 
 	node* temp;
@@ -170,9 +172,7 @@ node* subtract(node* A, node* B) {
 }
 
 node* multiply(node* A, node* B) {
-	node* head = (node*) malloc(sizeof(node));
-	head->exp = -1;
-	head->coeff = 0;
+	node* head = getnode(-1, 0);
 	head->next = head;
 
 	node* temp = NULL;
@@ -183,13 +183,11 @@ node* multiply(node* A, node* B) {
 	while(A->exp != -1) {
 		while(B->exp != -1) {
 			if(head->next == head)
-				head->next = temp = (node*) malloc(sizeof(node));
+				head->next = temp = getnode(A->exp+B->exp, A->coeff * B->coeff);
 			else {
-				temp->next = (node*) malloc(sizeof(node));
+				temp->next = getnode(A->exp+B->exp, A->coeff * B->coeff);
 				temp = temp->next;
 			}
-			temp->exp = A->exp + B->exp;
-			temp->coeff = A->coeff * B->coeff;
 			B = B->next;
 		}
 		B = B->next;
