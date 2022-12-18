@@ -19,7 +19,6 @@ typedef struct {
 
 int checkop(char);
 node* create(char*);
-void freetree(node*);
 int evaluate(node*);
 void freetree(node*);
 stack* initialize();
