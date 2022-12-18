@@ -58,8 +58,7 @@ node* create() {
 	scanf("%c", &ele);
 
 	if(ele != '#') {
-		root = (node*) malloc(sizeof(node));
-		root->data = ele;
+		root = getnode(ele);
 		push(s, root);
 	}
 

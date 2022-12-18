@@ -50,7 +50,7 @@ int main() {
 	inorder(root);
 	printf("\n");
 
-	printf("Preorder Traversal of Tree: ");
+	printf("Preorder Traversal of the given tree: ");
 	preorder(root);
 	printf("\n");
 
