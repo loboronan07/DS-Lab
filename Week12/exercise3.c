@@ -16,11 +16,11 @@ node* create(int);
 void inorder(node*);
 void freetree(node*);
 int search(node*, int);
-void print_ancestors(node*, int);
+int print_ancestors(node*, int);
 
 int main() {
 	int data;
-	printf("Enter the data for the Binary Search Tree in the order specified...\n");
+	printf("Enter the data for the Binary Tree in the order specified...\n");
 	printf("Enter data for root(Hit 0 to exit): ");
 	scanf("%d", &data);
 	node* root = create(data);
@@ -32,8 +32,14 @@ int main() {
     printf("Enter the node whose ancestors is to be found: ");
     scanf("%d", &data);
 
-    print_ancestors(root, data);
-
+    if(search(root, data)) {
+    	printf("The ancestors of %d from node to root are: ", data);
+    	print_ancestors(root, data);
+    	printf("\n");
+    }
+    else 
+    	printf("%d does not exist in the tree...\n", data);
+    
 	freetree(root);
 
 	return 0;
@@ -78,31 +84,26 @@ void freetree(node* root) {
 }
 
 int search(node* root, int ele) {
-    int flag = 0;
+   	if(!root)
+   		return 0;
     
-    node* curr = root;
-    while(curr) {
-        if(curr->data == ele) {
-            flag=1;
-            break;
-        }
-        curr = ele < curr->data ? curr->left : curr->right;
-    }
+    if(root->data == ele)
+    	return 1;
 
-    return flag;
+    return (search(root->left, ele) || search(root->right, ele));
 }
 
-void print_ancestors(node* root, int ele) { 
-    if(search(root, ele)) {
-        node* curr = root;
+int print_ancestors(node* root, int ele) { 
+    if(!root)
+    	return 0;
 
-        printf("The ancestors of the node %d is: ", ele);
-        while(curr->data != ele) {
-            printf("%d ", curr->data);
-            curr = ele < curr->data ? curr->left : curr->right;
-        }
-        printf("\n");
-    }
-    else 
-        printf("%d does not exist in the BST.\n", ele);
+    if(root->data == ele)
+    	return 1;
+
+    int flag = (print_ancestors(root->right, ele) || print_ancestors(root->left, ele));
+
+    if(flag)
+    	printf("\t%d", root->data);
+
+    return flag;
 }
