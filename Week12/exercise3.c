@@ -100,10 +100,10 @@ int print_ancestors(node* root, int ele) {
     if(root->data == ele)
     	return 1;
 
-    int flag = (print_ancestors(root->right, ele) || print_ancestors(root->left, ele));
-
-    if(flag)
+    if(print_ancestors(root->right, ele) || print_ancestors(root->left, ele)) {
     	printf("\t%d", root->data);
+    	return 1;
+    }
 
-    return flag;
+    return 0;
 }
